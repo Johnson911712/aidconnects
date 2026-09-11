@@ -18,10 +18,10 @@ workflows:
           cd ios/App
           
           # Resolve Swift Package Manager dependencies
-          xcodebuild -resolvePackageDependencies -workspace App.xcworkspace -scheme App
+          xcodebuild -resolvePackageDependencies -project App.xcodeproj -scheme App
           
           # Build the app
-          xcodebuild -workspace App.xcworkspace \
+          xcodebuild -project App.xcodeproj \
             -scheme App \
             -configuration Release \
             -sdk iphoneos \
@@ -37,7 +37,7 @@ workflows:
           cp -r App.app Payload/
           zip -r App.ipa Payload
           
-          # Move the IPA to a simple folder at the root of the project so Codemagic can find it easily
+          # Move the IPA to a simple folder at the root of the project
           cd $CM_BUILD_DIR
           mkdir build_output
           cp ios/App/build/DerivedData/Build/Products/Release-iphoneos/App.ipa build_output/App.ipa
