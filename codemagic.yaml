@@ -13,10 +13,6 @@ workflows:
         script: npm run build
       - name: Sync web assets to native iOS project
         script: npx cap sync ios
-      - name: Install CocoaPods dependencies
-        script: |
-          cd ios/App
-          pod install
       - name: Build unsigned IPA
         script: |
           cd ios/App
