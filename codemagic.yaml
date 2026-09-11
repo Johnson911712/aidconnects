@@ -16,20 +16,31 @@ workflows:
       - name: Build unsigned IPA
         script: |
           cd ios/App
+          
+          # Resolve Swift Package Manager dependencies
+          xcodebuild -resolvePackageDependencies -workspace App.xcworkspace -scheme App
+          
+          # Build the app
           xcodebuild -workspace App.xcworkspace \
             -scheme App \
             -configuration Release \
-            -derivedDataPath build \
-            -archivePath build/App.xcarchive \
+            -sdk iphoneos \
+            -derivedDataPath build/DerivedData \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
-            archive
+            build
           
-          cd build/App.xcarchive/Products/Applications
+          # Package into an IPA file
+          cd build/DerivedData/Build/Products/Release-iphoneos
           mkdir Payload
           cp -r App.app Payload/
           zip -r App.ipa Payload
+          
+          # Move the IPA to a simple folder at the root of the project so Codemagic can find it easily
+          cd $CM_BUILD_DIR
+          mkdir build_output
+          cp ios/App/build/DerivedData/Build/Products/Release-iphoneos/App.ipa build_output/App.ipa
     artifacts:
-      - ios/App/build/App.xcarchive/Products/Applications/App.ipa
+      - build_output/App.ipa
       - /tmp/xcodebuild_logs/*.log
