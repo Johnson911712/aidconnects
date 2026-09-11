@@ -29,12 +29,11 @@ workflows:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             archive
-          cd build
-          xcodebuild -exportArchive \
-            -archivePath App.xcarchive \
-            -exportPath ipa \
-            -exportOptionsPlist ExportOptions.plist \
-            CODE_SIGNING_ALLOWED=NO
+          
+          cd build/App.xcarchive/Products/Applications
+          mkdir Payload
+          cp -r App.app Payload/
+          zip -r App.ipa Payload
     artifacts:
-      - ios/App/build/ipa/*.ipa
+      - ios/App/build/App.xcarchive/Products/Applications/App.ipa
       - /tmp/xcodebuild_logs/*.log
